@@ -5,7 +5,7 @@ Second Serve is a full-stack web application designed to reduce food waste and c
 ## Team Information
 
 **Course:** CEN3031 - Software Engineering  
-**Group:** Group 8
+**Group:** 8
 
 | Role | Team Member |
 |--------|------------|
