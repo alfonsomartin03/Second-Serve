@@ -1,18 +1,18 @@
 ---
-name: "🚀 Feature Request / User Story"
+name: "Feature Request / User Story"
 about: Propose a new idea or user-facing enhancement.
 title: "[Feature]: "
 labels: ["enhancement", "user-story"]
 ---
 
-### 👤 User Story
+### User Story
 **As a** [type of user]  
 **I want** [some goal]  
 **So that** [some reason or benefit]  
 
-### 📋 Acceptance Criteria
+### Acceptance Criteria
 - [ ] Criterion 1
 - [ ] Criterion 2
 
-### 🔍 Context / Examples
+### Context / Examples
 Add any mockups, screenshots, or extra context here.
