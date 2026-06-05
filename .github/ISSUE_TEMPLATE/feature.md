@@ -14,5 +14,11 @@ labels: ["enhancement", "user-story"]
 - [ ] Criterion 1
 - [ ] Criterion 2
 
+### Implementation Tasks
+- [ ] Task 1
+- [ ] Task 2
+- [ ] Task 3
+- [ ] Task 4
+
 ### Context / Examples
 Add any mockups, screenshots, or extra context here.
