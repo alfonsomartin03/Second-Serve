@@ -10,6 +10,11 @@ const ListingSchema = new mongoose.Schema({
     type: String, 
     required: [true, 'Food item name is required'] 
   },
+  quantity: {
+  type: Number,
+  required: true,
+  default: 1
+  },
   expirationDate: { 
     type: Date, 
     required: [true, 'Expiration date is required'] 
