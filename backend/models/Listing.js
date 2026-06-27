@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 const mongoose = require('mongoose');
 
 const ListingSchema = new mongoose.Schema({
@@ -28,6 +27,3 @@ const ListingSchema = new mongoose.Schema({
 }, { timestamps: true });
 
 module.exports = mongoose.model('Listing', ListingSchema);
-=======
-
->>>>>>> origin/feature/T3-datamodel-User
