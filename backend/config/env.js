@@ -6,6 +6,7 @@ dotenv.config({ path: path.join(__dirname, "..", ".env") });
 
 // These are needed before the backend can safely start.
 const requiredVars = ["MONGODB_URI", "JWT_SECRET"];
+// Checks each required variable and keeps track of the ones that are missing.
 const missingVars = requiredVars.filter((name) => !process.env[name]);
 
 if (missingVars.length > 0) {
