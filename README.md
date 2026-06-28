@@ -61,8 +61,17 @@ Second Serve provides a reliable and efficient platform for transferring surplus
 
 ```
 client/     # React frontend
-server/     # Node/Express backend
+backend/    # Node/Express backend
 docs/       # Project documentation
+```
+
+## Running Backend
+
+```bash
+cd backend
+npm install
+cp .env.example .env
+npm start
 ```
 
 ## License
