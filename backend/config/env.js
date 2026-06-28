@@ -1,8 +1,10 @@
 const path = require("path");
 const dotenv = require("dotenv");
 
+// Load local secrets from backend/.env. This file should not be pushed to GitHub.
 dotenv.config({ path: path.join(__dirname, "..", ".env") });
 
+// These are needed before the backend can safely start.
 const requiredVars = ["MONGODB_URI", "JWT_SECRET"];
 const missingVars = requiredVars.filter((name) => !process.env[name]);
 

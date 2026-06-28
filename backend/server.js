@@ -6,10 +6,12 @@ const app = express();
 
 app.use(express.json());
 
+// Simple route to make sure the backend is awake.
 app.get("/api/health", (req, res) => {
     res.json({ message: "Second Serve backend is running" });
 });
 
+// Connect to the database first, then start accepting requests.
 mongoose.connect(config.mongoUri)
     .then(() => {
         app.listen(config.port, () => {
