@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 export default function Home() {
   return (
     <div style={{ padding: "2rem", maxWidth: "900px", margin: "0 auto" }}>
-      <h1>Second Serve</h1>
+      <title>Second Serve</title>
       <h3>Reducing food waste, one meal at a time.</h3>
 
       <p>
