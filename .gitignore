@@ -1,6 +1,8 @@
+# Dependencies
 node_modules/
 backend/node_modules/
 
+# Environment variables
 .env
 .env.*
 !.env.example
@@ -9,4 +11,32 @@ backend/.env
 backend/.env.*
 !backend/.env.example
 
+# Build outputs
+dist/
+dist-ssr/
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# Local config
+*.local
+
+# IDE / OS files
+.vscode/*
+!.vscode/extensions.json
+.idea/
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Project-specific
 *.pdf
