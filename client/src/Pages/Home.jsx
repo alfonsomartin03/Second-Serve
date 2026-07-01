@@ -12,9 +12,7 @@ export default function Home() {
         ending up in landfills.
       </p>
 
-      <Link to="/login">
-        <button>Get Started</button>
-      </Link>
+      <Link to="/login">Get Started</Link>
 
       <hr />
 
@@ -48,9 +46,7 @@ export default function Home() {
         <li>Promote sustainability</li>
       </ul>
 
-      <Link to="/login">
-        <button>Login</button>
-      </Link>
+    <Link to="/login">Get Started</Link>
     </div>
   );
 }
