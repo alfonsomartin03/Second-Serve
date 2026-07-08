@@ -3,11 +3,13 @@ const mongoose = require("mongoose");
 const config = require("./config/env");
 const cookieParser = require("cookie-parser");
 const authRoute = require("./routes/authRoute");
+const cors = require("cors");
 
 const app = express();
 
 app.use(express.json());
 app.use(cookieParser());
+app.use(cors());
 
 // Simple route to make sure the backend is awake.
 app.get("/api/health", (req, res) => {
