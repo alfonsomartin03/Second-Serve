@@ -10,7 +10,7 @@ function Login() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
-    console.log("Submitting login for:", { email, password });
+    console.log("Submitting login for:", { email });
   
     // Attempts to send the email and password to the backend server
     try {
