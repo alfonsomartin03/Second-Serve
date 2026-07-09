@@ -1,18 +1,17 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
+import { Lock, Mail, Leaf } from "lucide-react";
+import "../styles/Login.css";
 
-function Login() {
-  // Sets up local component state to track input values and handle any error messages
+export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
 
-  // Triggers when the user clicks the "Log In" button
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
-    console.log("Submitting login for:", { email });
-  
-    // Attempts to send the email and password to the backend server
+
     try {
       const response = await fetch("http://localhost:5000/api/auth/login", {
         method: "POST",
@@ -24,55 +23,72 @@ function Login() {
 
       const data = await response.json();
 
-      // Checks if the server returned a bad status code
       if (!response.ok) {
         throw new Error(data.message || "Login failed");
       }
 
-      // Saves the returned JWT token and user details into the browser's localStorage
       localStorage.setItem("token", data.token);
       localStorage.setItem("userId", data.userId);
 
-      console.log("Login successful! Token saved.");
       alert("Logged in successfully!");
-      
-    // Catches network failures or explicit errors thrown from the response validation
     } catch (err) {
       setError(err.message);
     }
   };
 
-  // Renders the placeholder structure, error display, and form inputs
   return (
-    <div style={{ padding: "2rem" }}>
-      <h1>Login Page</h1>
-      <p>This is a placeholder login page for Second Serve.</p>
+    <div className="login-page">
+      <div className="login-card">
+        <div className="login-header">
+          <Leaf size={40} />
+          <h1>Second Serve</h1>
+          <p>Sign in to your account</p>
+        </div>
 
-      <form onSubmit={handleSubmit}>
-        <div>
-          <label>Email: </label>
-          <input 
-            type="email" 
-            value={email} 
-            onChange={(e) => setEmail(e.target.value)} 
-            required 
-          />
-        </div>
-        <br />
-        <div>
-          <label>Password: </label>
-          <input 
-            type="password" 
-            value={password} 
-            onChange={(e) => setPassword(e.target.value)} 
-            required 
-          />
-        </div>
-        <br />
-        <button type="submit">Log In</button>
-      </form>
+        {error && <p className="login-error">{error}</p>}
+
+        <form className="login-form" onSubmit={handleSubmit}>
+          <label>
+            Email
+            <div className="input-group">
+              <Mail size={18} />
+              <input
+                type="email"
+                placeholder="you@example.com"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+              />
+            </div>
+          </label>
+
+          <label>
+            Password
+            <div className="input-group">
+              <Lock size={18} />
+              <input
+                type="password"
+                placeholder="Enter your password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+              />
+            </div>
+          </label>
+
+          <button type="submit" className="login-btn">
+            Log In
+          </button>
+        </form>
+
+        <p className="register-link">
+          Don't have an account? <Link to="/register">Create one</Link>
+        </p>
+
+        <Link className="home-link" to="/">
+          ← Back to Home
+        </Link>
+      </div>
     </div>
   );
 }
-
-export default Login;
