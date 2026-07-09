@@ -1,15 +1,22 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const config = require("./config/env");
+const cookieParser = require("cookie-parser");
+const authRoute = require("./routes/authRoute");
+const cors = require("cors");
 
 const app = express();
 
 app.use(express.json());
+app.use(cookieParser());
+app.use(cors());
 
 // Simple route to make sure the backend is awake.
 app.get("/api/health", (req, res) => {
     res.json({ message: "Second Serve backend is running" });
 });
+
+app.use("/api/auth", authRoute);
 
 // Connect to the database first, then start accepting requests.
 mongoose.connect(config.mongoUri)
