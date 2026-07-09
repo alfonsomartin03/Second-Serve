@@ -40,3 +40,6 @@ lerna-debug.log*
 
 # Project-specific
 *.pdf
+
+# Test files
+test.http
