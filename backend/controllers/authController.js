@@ -1,4 +1,5 @@
-const User = require("../models/User");
+const UserModel = require("../models/User");
+const User = UserModel.default || UserModel;
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 
@@ -11,8 +12,22 @@ const generateToken = (id) => {
 
 //Attempt to register a new user and handle errors
 exports.registerUser = async (req, res) => {
+    console.log("REGISTER CONTROLLER HIT");
+    console.log(req.body);
+
     try {
-        const { name, email, password, role, organizationName, phone, address } = req.body;
+        const {
+            accountType,
+            organizationName,
+            contactName,
+            email,
+            password,
+            phone,
+            address,
+            city,
+            state,
+            zipCode
+        } = req.body;
 
         //Check if user already exists
         const userExists = await User.findOne({ email });
@@ -26,13 +41,16 @@ exports.registerUser = async (req, res) => {
 
         //Create the new user in the database
         const newUser = await User.create({
-            name,
-            email,
-            passwordHash: hashedSecurePassword, 
-            role,
+            accountType,
             organizationName,
+            contactName,
+            email,
+            password: hashedSecurePassword,
             phone,
-            address
+            address,
+            city,
+            state,
+            zipCode
         });
 
         //Confirm successful creation
@@ -43,8 +61,14 @@ exports.registerUser = async (req, res) => {
         });
 
     } catch (error) {
-        res.status(500).json({ message: "Server error", error: error.message });
-    }
+    console.error("REGISTER ERROR:");
+    console.error(error);
+
+    res.status(500).json({
+        message: "Server error",
+        error: error.message
+    });
+}
 };
 
 //Attempt to login a user and handle errors
@@ -59,7 +83,7 @@ exports.loginUser = async (req, res) => {
         }
 
         //Compare entered password with the hashed password in DB
-        const isMatch = await bcrypt.compare(password, user.passwordHash);
+        const isMatch = await bcrypt.compare(password, user.password);
         if (!isMatch) {
             return res.status(400).json({ message: "Invalid email or password" });
         }
