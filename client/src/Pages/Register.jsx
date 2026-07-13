@@ -136,8 +136,6 @@ export default function Register() {
         throw new Error(data.message || "Registration failed.");
       }
 
-      alert("Account created successfully!");
-
       setFormData({
         organizationName: "",
         contactName: "",

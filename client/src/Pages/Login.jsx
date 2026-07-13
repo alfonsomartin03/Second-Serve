@@ -50,8 +50,6 @@ export default function Login() {
         );
       }
 
-      alert("Logged in successfully!");
-
       // Redirect to dashboard
       navigate("/dashboard");
 
