@@ -1,11 +1,12 @@
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { Lock, Mail, Leaf } from "lucide-react";
 import "../styles/Login.css";
 
 export default function Login() {
   const navigate = useNavigate();
-
+  const location = useLocation();
+  const successMessage = location.state?.successMessage;
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -74,6 +75,21 @@ export default function Login() {
           </p>
         )}
 
+        {successMessage && (
+          <div
+            style={{
+              background: "#e8f5e9",
+              color: "#2e7d32",
+              padding: "12px",
+              borderRadius: "8px",
+              marginBottom: "16px",
+              textAlign: "center",
+              fontWeight: "600",
+            }}
+          >
+            {successMessage}
+          </div>
+        )}
         <form
           className="login-form"
           onSubmit={handleSubmit}
