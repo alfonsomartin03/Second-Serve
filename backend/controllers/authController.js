@@ -12,8 +12,6 @@ const generateToken = (id) => {
 
 //Attempt to register a new user and handle errors
 exports.registerUser = async (req, res) => {
-    console.log("REGISTER CONTROLLER HIT");
-    console.log(req.body);
 
     try {
         const {
