@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import {
   Leaf,
@@ -20,6 +20,7 @@ import {
 import "../styles/Register.css";
 
 export default function Register() {
+  const navigate = useNavigate();
   const [accountType, setAccountType] = useState("donor");
   const [emailError, setEmailError] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -149,9 +150,15 @@ export default function Register() {
         zipCode: "",
       });
 
-      setEmailError("");
-      setShowPassword(false);
-      setShowConfirmPassword(false);
+    setEmailError("");
+    setShowPassword(false);
+    setShowConfirmPassword(false);
+
+    navigate("/login", {
+        state: {
+        successMessage: "Account created successfully. Please sign in.",
+        }
+    });
     } catch (error) {
       alert(error.message);
       console.error(error);
