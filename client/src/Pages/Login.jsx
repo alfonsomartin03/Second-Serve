@@ -37,7 +37,6 @@ export default function Login() {
       localStorage.setItem("userId", data.userId);
 
       // Temporary success notification
-      alert("Logged in successfully!");
     } catch (err) {
       // Displays any network or authentication errors to the user
       setError(err.message);
