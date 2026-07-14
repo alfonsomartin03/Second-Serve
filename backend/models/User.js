@@ -1,9 +1,9 @@
-import mongoose from "mongoose";
+const mongoose = require("mongoose");
 
 const userSchema = new mongoose.Schema({
   accountType: {
     type: String,
-    enum: ["donor", "recipient"],
+    enum: ["donor", "recipient", "admin"],
     required: true,
   },
 
@@ -35,4 +35,4 @@ const userSchema = new mongoose.Schema({
   zipCode: String,
 });
 
-export default mongoose.model("User", userSchema);
+module.exports = mongoose.model("User", userSchema);
