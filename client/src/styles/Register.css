@@ -398,3 +398,25 @@
     font-size: 3rem;
   }
 }
+
+.eye-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+}
+
+.field-error .input-wrap {
+  border-color: #d64545;
+}
+
+.field-error-message {
+  display: block;
+  margin-top: 6px;
+  color: #d64545;
+  font-size: 0.82rem;
+}
