@@ -3,7 +3,7 @@ import mongoose from "mongoose";
 const userSchema = new mongoose.Schema({
   accountType: {
     type: String,
-    enum: ["donor", "recipient"],
+    enum: ["donor", "recipient", "admin"],
     required: true,
   },
 
