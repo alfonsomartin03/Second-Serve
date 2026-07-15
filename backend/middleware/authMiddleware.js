@@ -21,4 +21,12 @@ const protect = async (req, res, next) => {
     }
 };
 
-module.exports = { protect };
+// Used after protect when a route should only be available to donors.
+const donorOnly = (req, res, next) => {
+  if (req.user && req.user.accountType === "donor") {
+    return next();
+  }
+  return res.status(403).json({ message: "Access denied. Donor account required." });
+};
+
+module.exports = { protect, donorOnly };
