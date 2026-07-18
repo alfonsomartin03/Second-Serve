@@ -27,7 +27,7 @@ export default function CreateListing() {
       {
         name: "",
         quantity: "",
-        units: "",
+        unit: "",
         expirationDate: "",
       },
     ]);
@@ -38,18 +38,52 @@ export default function CreateListing() {
     setItems(updatedItems);
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
+  const handleSubmit = async (e) => {
+  e.preventDefault();
+
+   console.log("Submit button clicked!");
+
+  try {
+    const token = localStorage.getItem("token");
 
     const listingData = {
       pickupInstructions,
-      items,
+      items: items.map((item) => ({
+        name: item.name,
+        quantity: Number(item.quantity),
+        unit: item.units, // <-- change here
+        expirationDate: item.expirationDate,
+      })),
     };
 
-    console.log("Submitting Listing:", listingData);
+    const response = await fetch(
+      "http://localhost:5001/api/listing",
+      {
+        method: "POST",
 
-    // backend POST request goes here later
-  };
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+
+        body: JSON.stringify(listingData),
+      }
+    );
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.message || "Unable to create listing");
+    }
+
+    alert("Listing created!");
+
+    navigate("/dashboard");
+  } catch (err) {
+    console.error(err);
+    alert(err.message);
+  }
+};
 
   return (
     <div className="create-listing-page">
