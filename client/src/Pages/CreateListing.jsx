@@ -4,22 +4,25 @@ import "../styles/CreateListing.css";
 
 export default function CreateListing() {
   const [pickupInstructions, setPickupInstructions] = useState("");
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   const [items, setItems] = useState([
     {
       name: "",
       quantity: "",
-      units: "",
+      unit: "",
       expirationDate: "",
     },
   ]);
 
   const handleItemChange = (index, field, value) => {
-    const updatedItems = [...items];
-    updatedItems[index][field] = value;
-    setItems(updatedItems);
-  };
+  setItems((prevItems) =>
+    prevItems.map((item, i) =>
+      i === index ? { ...item, [field]: value } : item
+    )
+  );
+};
 
   const addItem = () => {
     setItems([
@@ -40,6 +43,7 @@ export default function CreateListing() {
 
   const handleSubmit = async (e) => {
   e.preventDefault();
+  setLoading(true);
 
    console.log("Submit button clicked!");
 
@@ -47,13 +51,11 @@ export default function CreateListing() {
     const token = localStorage.getItem("token");
 
     const listingData = {
-      pickupInstructions,
-      items: items.map((item) => ({
-        name: item.name,
-        quantity: Number(item.quantity),
-        unit: item.units, // <-- change here
-        expirationDate: item.expirationDate,
-      })),
+     pickupInstructions,
+     items: items.map((item) => ({
+      ...item,
+      quantity: Number(item.quantity),
+     })),
     };
 
     const response = await fetch(
@@ -82,6 +84,8 @@ export default function CreateListing() {
   } catch (err) {
     console.error(err);
     alert(err.message);
+  } finally {
+    setLoading(false);
   }
 };
 
@@ -138,6 +142,7 @@ export default function CreateListing() {
               </div>
 
               <input
+                required
                 type="text"
                 placeholder="Item Name"
                 value={item.name}
@@ -151,6 +156,8 @@ export default function CreateListing() {
               />
 
               <input
+                required
+                min="1"
                 type="number"
                 placeholder="Quantity"
                 value={item.quantity}
@@ -163,20 +170,26 @@ export default function CreateListing() {
                 }
               />
 
-              <input
-                type="text"
-                placeholder="Units (lbs, boxes, gallons...)"
-                value={item.units}
-                onChange={(e) =>
-                  handleItemChange(
-                    index,
-                    "units",
-                    e.target.value
-                  )
-                }
-              />
+              <select
+                required
+                value={item.unit}
+                onChange={(e) => handleItemChange(index, "unit", e.target.value)}
+              >
+                <option value="" disabled hidden>
+                  Select Unit
+                </option>
+                <option value="lbs">lbs</option>
+                <option value="oz">oz</option>
+                <option value="kg">kg</option>
+                <option value="l">l</option>
+                <option value="boxes">boxes</option>
+                <option value="items">items</option>
+                <option value="servings">servings</option>
+                <option value="bags">bags</option>
+                </select>
 
               <input
+                required
                 type="date"
                 value={item.expirationDate}
                 onChange={(e) =>
@@ -201,8 +214,9 @@ export default function CreateListing() {
           <button
             type="submit"
             className="submit-btn"
+            disabled={loading}
           >
-            Create Listing
+            {loading ? "Creating Listing..." : "Create Listing"}
           </button>
 
         </form>

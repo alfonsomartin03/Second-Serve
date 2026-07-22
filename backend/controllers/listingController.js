@@ -19,7 +19,19 @@ const createListing = async (req, res) => {
   //Return an error status if lsiting fails
   catch (error) {
     console.error('Error creating listing:', error);
-    res.status(500).json({ message: 'Server error. Could not create listing.', error: error.message });
+
+    // Handle Mongoose validation errors explicitly
+    if (error.name === 'ValidationError') {
+      return res.status(400).json({ 
+        message: 'Validation failed', 
+        error: error.message 
+      });
+    }
+
+    res.status(500).json({ 
+      message: 'Server error. Could not create listing.', 
+      error: error.message 
+    });
   }
 };
 
