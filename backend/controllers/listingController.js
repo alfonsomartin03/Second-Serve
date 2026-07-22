@@ -1,8 +1,5 @@
-<<<<<<< HEAD
-=======
 const mongoose = require('mongoose');
 const User = mongoose.model('User');
->>>>>>> 1094ae42e21df56e051bcbf46e7421df0d45b948
 const Listing = require('../models/Listing');
 
 //Attempt to create a new listing
@@ -21,12 +18,11 @@ const createListing = async (req, res) => {
     res.status(201).json(newListing);
   } 
   
-<<<<<<< HEAD
-  //Return an error status if lsiting fails
+  //Return an error status if listing fails
   catch (error) {
     console.error('Error creating listing:', error);
 
-    // Handle Mongoose validation errors explicitly
+      // Handle Mongoose validation errors explicitly
     if (error.name === 'ValidationError') {
       return res.status(400).json({ 
         message: 'Validation failed', 
@@ -37,11 +33,7 @@ const createListing = async (req, res) => {
     res.status(500).json({ 
       message: 'Server error. Could not create listing.', 
       error: error.message 
-=======
-  //Return an error status if listing fails
-  catch (error) {
-    console.error('Error creating listing:', error);
-    res.status(500).json({ message: 'Server error. Could not create listing.', error: error.message });
+    });
   }
 };
 
@@ -105,15 +97,8 @@ const getListings = async (req, res) => {
       success: false,
       message: 'Server Error fetching marketplace listings',
       error: error.message,
->>>>>>> 1094ae42e21df56e051bcbf46e7421df0d45b948
     });
   }
 };
 
-<<<<<<< HEAD
-module.exports = {
-  createListing,
-};
-=======
 module.exports = { createListing, getListings };
->>>>>>> 1094ae42e21df56e051bcbf46e7421df0d45b948
