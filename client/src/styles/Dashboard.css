@@ -1,0 +1,168 @@
+.dashboard {
+  min-height: 100vh;
+  background: #f5f7fa;
+  padding: 2rem;
+}
+
+/* Header */
+
+.dashboard-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  padding-bottom: 1rem;
+  margin-bottom: 2rem;
+
+  border-bottom: 1px solid #ddd;
+}
+
+.dashboard-header h1 {
+  color: #2e7d32;
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.logout-btn {
+  background: #e53935;
+  color: white;
+
+  border: none;
+  padding: 0.6rem 1rem;
+  border-radius: 8px;
+
+  cursor: pointer;
+}
+
+/* Welcome */
+
+.welcome-section {
+  margin-bottom: 2rem;
+}
+
+.welcome-section h2 {
+  margin-bottom: 0.5rem;
+}
+
+/* Search */
+
+.search-container {
+  margin-bottom: 2rem;
+}
+
+.search-bar {
+  width: 100%;
+  padding: 1rem;
+
+  border: 1px solid #ddd;
+  border-radius: 10px;
+
+  font-size: 1rem;
+}
+
+/* Grid */
+
+.listings-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 1.5rem;
+}
+
+/* Card */
+
+.listing-card {
+  background: white;
+
+  border-radius: 16px;
+  padding: 1.5rem;
+
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+
+  transition: transform 0.2s ease;
+}
+
+.listing-card:hover {
+  transform: translateY(-3px);
+}
+
+.listing-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  margin-bottom: 1rem;
+}
+
+.listing-header h3 {
+  color: #333;
+}
+
+.status {
+  padding: 0.35rem 0.8rem;
+  border-radius: 999px;
+
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.status.active {
+  background: #e8f5e9;
+  color: #2e7d32;
+}
+
+.status.pending {
+  background: #fff8e1;
+  color: #f9a825;
+}
+
+.view-btn {
+  width: 100%;
+  margin-top: 1rem;
+
+  padding: 0.75rem;
+
+  background: #2e7d32;
+  color: white;
+
+  border: none;
+  border-radius: 10px;
+
+  cursor: pointer;
+}
+
+.view-btn:hover {
+  background: #256428;
+}
+
+/* Floating Button */
+
+.floating-btn {
+  position: fixed;
+
+  bottom: 30px;
+  right: 30px;
+
+  width: 65px;
+  height: 65px;
+
+  border: none;
+  border-radius: 50%;
+
+  font-size: 2rem;
+  font-weight: bold;
+
+  background: #2e7d32;
+  color: white;
+
+  cursor: pointer;
+
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.25);
+}
+
+.floating-btn:hover {
+  transform: scale(1.05);
+}
