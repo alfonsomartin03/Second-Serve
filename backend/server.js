@@ -3,6 +3,7 @@ const mongoose = require("mongoose");
 const config = require("./config/env");
 const cookieParser = require("cookie-parser");
 const authRoute = require("./routes/authRoute");
+const listingRoute = require('./routes/listingRoute');
 const cors = require("cors");
 
 const app = express();
@@ -17,6 +18,7 @@ app.get("/api/health", (req, res) => {
 });
 
 app.use("/api/auth", authRoute);
+app.use("/api/listing", listingRoute);
 
 // Connect to the database first, then start accepting requests.
 mongoose.connect(config.mongoUri)
