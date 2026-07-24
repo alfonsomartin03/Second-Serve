@@ -38,6 +38,17 @@
   cursor: pointer;
 }
 
+.admin-link-btn {
+  background: #2e7d32;
+  color: white;
+
+  border: none;
+  padding: 0.6rem 1rem;
+  border-radius: 8px;
+
+  cursor: pointer;
+}
+
 /* Welcome */
 
 .welcome-section {
