@@ -3,10 +3,10 @@ import "../styles/Dashboard.css";
 import { useNavigate } from "react-router-dom";
 
 export default function Dashboard() {
-  // Temporary user type for testing
-  const [accountType] = useState("donor");
+  const [accountType] = useState(
+    localStorage.getItem("accountType") || "donor"
+  );
   const navigate = useNavigate();
-  // Change to "donor" to test donor view
 
   const listings = [
     {
@@ -40,6 +40,14 @@ export default function Dashboard() {
 
         <div className="header-right">
           <span>{accountType.toUpperCase()}</span>
+          {accountType === "admin" && (
+            <button
+              className="admin-link-btn"
+              onClick={() => navigate("/admin/accounts")}
+            >
+              Accounts
+            </button>
+          )}
           <button className="logout-btn">Logout</button>
         </div>
       </header>
@@ -98,8 +106,9 @@ export default function Dashboard() {
         <button
           className="floating-btn"
           onClick={() => navigate("/create-listing")}
-          >+
-          </button>
+        >
+          +
+        </button>
       )}
     </div>
   );
