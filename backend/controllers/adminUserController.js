@@ -18,6 +18,10 @@ exports.getUsers = async (req, res) => {
 // Shared helper for suspend/reactivate so the two routes stay simple.
 const updateAccountStatus = async (req, res, status, action) => {
     try {
+        if (req.user._id.toString() === req.params.userId) {
+            return res.status(400).json({ message: "Admins cannot change their own account status" });
+        }
+
         const user = await User.findById(req.params.userId);
 
         if (!user) {
@@ -44,10 +48,10 @@ const updateAccountStatus = async (req, res, status, action) => {
     }
 };
 
-exports.suspendUser = (req, res) => {
-    updateAccountStatus(req, res, "suspended", "suspend");
+exports.suspendUser = async (req, res) => {
+    return updateAccountStatus(req, res, "suspended", "suspend");
 };
 
-exports.reactivateUser = (req, res) => {
-    updateAccountStatus(req, res, "active", "reactivate");
+exports.reactivateUser = async (req, res) => {
+    return updateAccountStatus(req, res, "active", "reactivate");
 };
