@@ -1,0 +1,151 @@
+.create-listing-page {
+  min-height: 100vh;
+  background: #f5f7fa;
+  padding: 2rem;
+}
+
+/* Header */
+
+.create-header {
+  max-width: 900px;
+  margin: 0 auto 2rem auto;
+
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.create-header h1 {
+  color: #2e7d32;
+  margin: 0;
+}
+
+.back-btn {
+  background: white;
+  color: #333;
+
+  border: 1px solid #ddd;
+  border-radius: 10px;
+
+  padding: 0.75rem 1.25rem;
+
+  cursor: pointer;
+  font-weight: 600;
+
+  transition: 0.2s ease;
+}
+
+.back-btn:hover {
+  background: #f3f3f3;
+}
+
+.create-listing-container {
+  max-width: 900px;
+  margin: 0 auto;
+
+  background: white;
+  padding: 2rem;
+
+  border-radius: 16px;
+
+  box-shadow:
+    0 4px 12px rgba(0,0,0,0.08);
+}
+
+.create-listing-container h1 {
+  margin-bottom: 2rem;
+  color: #2e7d32;
+}
+
+.form-group {
+  margin-bottom: 2rem;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+}
+
+textarea {
+  width: 100%;
+  padding: 1rem;
+
+  border: 1px solid #ddd;
+  border-radius: 10px;
+
+  resize: vertical;
+}
+
+.item-card {
+  border: 1px solid #ddd;
+  border-radius: 12px;
+
+  padding: 1rem;
+  margin-bottom: 1rem;
+
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+
+  background: #fafafa;
+}
+
+.item-card input {
+  padding: 0.8rem;
+
+  border: 1px solid #ddd;
+  border-radius: 8px;
+}
+
+.item-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.remove-btn {
+  background: #e53935;
+  color: white;
+
+  border: none;
+  border-radius: 8px;
+
+  padding: 0.5rem 1rem;
+
+  cursor: pointer;
+}
+
+.add-item-btn {
+  width: 100%;
+
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+
+  padding: 1rem;
+
+  background: #1976d2;
+  color: white;
+
+  border: none;
+  border-radius: 10px;
+
+  cursor: pointer;
+}
+
+.submit-btn {
+  width: 100%;
+
+  padding: 1rem;
+
+  background: #2e7d32;
+  color: white;
+
+  border: none;
+  border-radius: 10px;
+
+  font-size: 1rem;
+  font-weight: 600;
+
+  cursor: pointer;
+}
