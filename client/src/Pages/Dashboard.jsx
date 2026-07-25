@@ -1,36 +1,53 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import "../styles/Dashboard.css";
 import { useNavigate } from "react-router-dom";
 
 export default function Dashboard() {
-  // Temporary user type for testing
-  const [accountType] = useState("donor");
+  
+  const [accountType, setAccountType] = useState("");
+  const [listings, setListings] = useState([]);
+  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
-  // Change to "donor" to test donor view
 
-  const listings = [
-    {
-      id: 1,
-      organization: "UF Dining Hall",
-      items: 12,
-      pickup: "Loading Dock A",
-      status: "Active",
-    },
-    {
-      id: 2,
-      organization: "Publix Archer Rd",
-      items: 8,
-      pickup: "Front Entrance",
-      status: "Active",
-    },
-    {
-      id: 3,
-      organization: "Fresh Market",
-      items: 15,
-      pickup: "Back Door",
-      status: "Pending",
-    },
-  ];
+  useEffect(() => {
+    const fetchDashboard = async () => {
+      try {
+        const token = localStorage.getItem("token");
+
+        const response = await fetch(
+          "http://localhost:5001/api/listing/dashboard",
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        const data = await response.json();
+
+        console.log("Dashboard response:", data);
+        console.log("Account type:", data.accountType);
+
+        if (!response.ok) {
+          throw new Error(data.message);
+        }
+
+        setAccountType(data.accountType);
+        setListings(data.data);
+
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchDashboard();
+  }, []);
+
+  if (loading) {
+    return <h2>Loading...</h2>;
+  }
 
   return (
     <div className="dashboard">
@@ -73,7 +90,7 @@ export default function Dashboard() {
         {listings.map((listing) => (
           <div key={listing.id} className="listing-card">
             <div className="listing-header">
-              <h3>{listing.organization}</h3>
+              <h3>{listing.donor.organizationName}</h3>
 
               <span className={`status ${listing.status.toLowerCase()}`}>
                 {listing.status}
@@ -81,11 +98,11 @@ export default function Dashboard() {
             </div>
 
             <p>
-              <strong>Items:</strong> {listing.items}
+              <strong>Items:</strong> {listing.items.length}
             </p>
 
             <p>
-              <strong>Pickup:</strong> {listing.pickup}
+              <strong>Pickup:</strong> {listing.pickupInstructions}
             </p>
 
             <button className="view-btn">View Details</button>
