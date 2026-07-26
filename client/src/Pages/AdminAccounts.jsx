@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { Shield, RotateCcw, Ban } from "lucide-react";
 import "../styles/AdminAccounts.css";
 
 const API_URL = "http://localhost:5001/api/admin/users";
@@ -10,7 +9,6 @@ export default function AdminAccounts() {
   const [loading, setLoading] = useState(true);
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
-  const [updatingUserId, setUpdatingUserId] = useState("");
 
   const token = localStorage.getItem("token");
   const accountType = localStorage.getItem("accountType");
@@ -50,7 +48,6 @@ export default function AdminAccounts() {
   }, [accountType, token]);
 
   const updateUserStatus = async (userId, action) => {
-    setUpdatingUserId(userId);
     setError("");
     setMessage("");
 
@@ -72,7 +69,6 @@ export default function AdminAccounts() {
         throw new Error(data.message || "Could not update account");
       }
 
-      // Change the row right away instead of forcing another full refresh.
       setUsers((currentUsers) =>
         currentUsers.map((user) =>
           user._id === userId
@@ -84,8 +80,6 @@ export default function AdminAccounts() {
       setMessage("Account updated.");
     } catch (err) {
       setError(err.message);
-    } finally {
-      setUpdatingUserId("");
     }
   };
 
@@ -93,7 +87,6 @@ export default function AdminAccounts() {
     return (
       <main className="admin-accounts-page">
         <section className="admin-empty">
-          <Shield size={34} />
           <h1>Admin Accounts</h1>
           <p>You need an admin account to view this page.</p>
           <Link to="/dashboard">Back to dashboard</Link>
@@ -150,19 +143,15 @@ export default function AdminAccounts() {
                     {user.accountStatus === "suspended" ? (
                       <button
                         className="account-action reactivate"
-                        disabled={updatingUserId === user._id}
                         onClick={() => updateUserStatus(user._id, "reactivate")}
                       >
-                        <RotateCcw size={16} />
                         Reactivate
                       </button>
                     ) : (
                       <button
                         className="account-action suspend"
-                        disabled={updatingUserId === user._id}
                         onClick={() => updateUserStatus(user._id, "suspend")}
                       >
-                        <Ban size={16} />
                         Suspend
                       </button>
                     )}
