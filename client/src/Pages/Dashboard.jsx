@@ -7,6 +7,7 @@ export default function Dashboard() {
   const [accountType, setAccountType] = useState("");
   const [listings, setListings] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [selectedListing, setSelectedListing] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -57,7 +58,16 @@ export default function Dashboard() {
 
         <div className="header-right">
           <span>{accountType.toUpperCase()}</span>
-          <button className="logout-btn">Logout</button>
+          <button
+            className="logout-btn"
+            onClick={() => {
+              localStorage.removeItem("token");
+              localStorage.removeItem("userId");
+              navigate("/");
+            }}
+          >
+            Logout
+          </button>
         </div>
       </header>
 
@@ -104,8 +114,18 @@ export default function Dashboard() {
             <p>
               <strong>Pickup:</strong> {listing.pickupInstructions}
             </p>
+            
+            <p>
+              <strong>Created:</strong>{" "}
+              {new Date(listing.createdAt).toLocaleDateString()}
+            </p>
 
-            <button className="view-btn">View Details</button>
+            <button
+              className="view-btn"
+              onClick={() => setSelectedListing(listing)}
+            >
+              View Details
+            </button>
           </div>
         ))}
       </div>
@@ -118,6 +138,79 @@ export default function Dashboard() {
           >+
           </button>
       )}
+
+      {selectedListing && (
+  <div
+    className="modal-overlay"
+    onClick={() => setSelectedListing(null)}
+  >
+    <div
+      className="listing-modal"
+      onClick={(e) => e.stopPropagation()}
+    >
+      <button
+        className="close-btn"
+        onClick={() => setSelectedListing(null)}
+      >
+        ✕
+      </button>
+
+      <h2>{selectedListing.donor.organizationName}</h2>
+
+      <hr />
+
+      <p>
+        <div className="detail-row">
+        <strong>Status</strong>
+        <span>{selectedListing.status}</span>
+      </div>
+
+      <div className="detail-row">
+        <strong>Pickup</strong>
+        <span>{selectedListing.pickupInstructions}</span>
+      </div>
+
+      <div className="detail-row">
+        <strong>Created</strong>
+        <span>
+          {new Date(selectedListing.createdAt).toLocaleDateString()}
+        </span>
+      </div>
+      </p>
+
+      <p>
+        <strong>Pickup:</strong>{" "}
+        {selectedListing.pickupInstructions}
+      </p>
+
+      <p>
+        <strong>Created:</strong>{" "}
+        {new Date(selectedListing.createdAt).toLocaleDateString()}
+      </p>
+
+      <h3>Food Items</h3>
+
+      {selectedListing.items.map((item, index) => (
+        <div key={index}>
+          <p>
+            <strong>{item.name}</strong>
+          </p>
+
+          <p>
+            {item.quantity} {item.unit}
+          </p>
+
+          <p>
+            Expires:{" "}
+            {new Date(item.expirationDate).toLocaleDateString()}
+          </p>
+
+          <hr />
+        </div>
+      ))}
+    </div>
+  </div>
+)}
     </div>
   );
 }
