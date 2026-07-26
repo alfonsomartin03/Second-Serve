@@ -1,4 +1,5 @@
 const Listing = require('../models/Listing');
+const Notification = require('../models/Notification');
 
 //Attempt to create a new listing
 const createListing = async (req, res) => {
@@ -10,6 +11,16 @@ const createListing = async (req, res) => {
       donor: req.user.id, 
       items,
       pickupInstructions
+    });
+
+    const firstItem = items && items.length > 0 ? items[0].name : "Donation";
+
+    // Let the donor know the donation update happened right away.
+    await Notification.create({
+      user: req.user.id,
+      listing: newListing._id,
+      donationName: firstItem,
+      message: "Donation listing created."
     });
 
     //Return the created listing with a success status
