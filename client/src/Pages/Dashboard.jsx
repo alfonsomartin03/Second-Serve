@@ -8,43 +8,63 @@ export default function Dashboard() {
   const [listings, setListings] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedListing, setSelectedListing] = useState(null);
+
+  //Search filter states
+  const [foodName, setFoodName] = useState("");
+  const [city, setCity] = useState("");
+  const [state, setState] = useState("");
+  const [zipCode, setZipCode] = useState("");
+
   const navigate = useNavigate();
 
-  useEffect(() => {
-    const fetchDashboard = async () => {
-      try {
-        const token = localStorage.getItem("token");
+  const fetchDashboard = async () => {
+    try {
+      setLoading(true);
+      const token = localStorage.getItem("token");
 
-        const response = await fetch(
-          "http://localhost:5001/api/listing/dashboard",
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
+      //Build query string dynamically based on non-empty values
+      const queryParams = new URLSearchParams();
+      if (foodName) queryParams.append("foodName", foodName);
+      if (city) queryParams.append("city", city);
+      if (state) queryParams.append("state", state);
+      if (zipCode) queryParams.append("zipCode", zipCode);
 
-        const data = await response.json();
-
-        console.log("Dashboard response:", data);
-        console.log("Account type:", data.accountType);
-
-        if (!response.ok) {
-          throw new Error(data.message);
-        }
-
-        setAccountType(data.accountType);
-        setListings(data.data);
-
-      } catch (error) {
-        console.error(error);
-      } finally {
-        setLoading(false);
+      //Fetch from public/search route when searching, or dashboard route on load
+      const url = queryParams.toString()
+      ? `http://localhost:5001/api/listing?${queryParams.toString()}`
+      : "http://localhost:5001/api/listing/dashboard";
+      
+      const response = await fetch(url, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      
+      const data = await response.json();
+      
+      console.log("Dashboard response:", data);
+      
+      console.log("Account type:", data.accountType);
+      if (!response.ok) {
+        throw new Error(data.message);
       }
-    };
+      if (data.accountType) setAccountType(data.accountType);
+      setListings(data.data);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
+  useEffect(() => {
     fetchDashboard();
   }, []);
+
+  const handleSearchSubmit = (e) => {
+    e.preventDefault(); // Prevents page reload
+    fetchDashboard();
+  };
 
   if (loading) {
     return <h2>Loading...</h2>;
@@ -86,19 +106,45 @@ export default function Dashboard() {
         </p>
       </section>
 
-      {/* Search */}
-      <div className="search-container">
+      {/* Multi-field Search Form */}
+      <form className="search-container" onSubmit={handleSearchSubmit}>
         <input
           type="text"
-          placeholder="Search listings..."
+          placeholder="Food item (e.g. Bread)"
+          value={foodName}
+          onChange={(e) => setFoodName(e.target.value)}
           className="search-bar"
         />
-      </div>
+        <input
+          type="text"
+          placeholder="City"
+          value={city}
+          onChange={(e) => setCity(e.target.value)}
+          className="search-bar"
+        />
+        <input
+          type="text"
+          placeholder="State"
+          value={state}
+          onChange={(e) => setState(e.target.value)}
+          className="search-bar"
+        />
+        <input
+          type="text"
+          placeholder="Zip Code"
+          value={zipCode}
+          onChange={(e) => setZipCode(e.target.value)}
+          className="search-bar"
+        />
+        <button type="submit" className="search-btn">
+          Search
+        </button>
+      </form>
 
       {/* Listings */}
       <div className="listings-grid">
         {listings.map((listing) => (
-          <div key={listing.id} className="listing-card">
+          <div key={listing._id || listing.id} className="listing-card">
             <div className="listing-header">
               <h3>{listing.donor.organizationName}</h3>
 
@@ -140,77 +186,65 @@ export default function Dashboard() {
       )}
 
       {selectedListing && (
-  <div
-    className="modal-overlay"
-    onClick={() => setSelectedListing(null)}
-  >
-    <div
-      className="listing-modal"
-      onClick={(e) => e.stopPropagation()}
-    >
-      <button
-        className="close-btn"
-        onClick={() => setSelectedListing(null)}
-      >
-        ✕
-      </button>
+        <div
+          className="modal-overlay"
+          onClick={() => setSelectedListing(null)}
+        >
+          <div
+            className="listing-modal"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button
+              className="close-btn"
+              onClick={() => setSelectedListing(null)}
+            >
+              ✕
+            </button>
 
-      <h2>{selectedListing.donor.organizationName}</h2>
+            <h2>{selectedListing.donor.organizationName}</h2>
 
-      <hr />
+            <hr />
 
-      <p>
-        <div className="detail-row">
-        <strong>Status</strong>
-        <span>{selectedListing.status}</span>
-      </div>
+            <div className="detail-row">
+              <strong>Status</strong>
+              <span>{selectedListing.status}</span>
+            </div>
 
-      <div className="detail-row">
-        <strong>Pickup</strong>
-        <span>{selectedListing.pickupInstructions}</span>
-      </div>
+            <div className="detail-row">
+              <strong>Pickup</strong>
+              <span>{selectedListing.pickupInstructions}</span>
+            </div>
 
-      <div className="detail-row">
-        <strong>Created</strong>
-        <span>
-          {new Date(selectedListing.createdAt).toLocaleDateString()}
-        </span>
-      </div>
-      </p>
+            <div className="detail-row">
+              <strong>Created</strong>
+              <span>
+                {new Date(selectedListing.createdAt).toLocaleDateString()}
+              </span>
+            </div>
 
-      <p>
-        <strong>Pickup:</strong>{" "}
-        {selectedListing.pickupInstructions}
-      </p>
+            <h3>Food Items</h3>
 
-      <p>
-        <strong>Created:</strong>{" "}
-        {new Date(selectedListing.createdAt).toLocaleDateString()}
-      </p>
+            {selectedListing.items.map((item, index) => (
+              <div key={item._id || index}>
+                <p>
+                  <strong>{item.name}</strong>
+                </p>
 
-      <h3>Food Items</h3>
+                <p>
+                  {item.quantity} {item.unit}
+                </p>
 
-      {selectedListing.items.map((item, index) => (
-        <div key={index}>
-          <p>
-            <strong>{item.name}</strong>
-          </p>
+                <p>
+                  Expires:{" "}
+                  {new Date(item.expirationDate).toLocaleDateString()}
+                </p>
 
-          <p>
-            {item.quantity} {item.unit}
-          </p>
-
-          <p>
-            Expires:{" "}
-            {new Date(item.expirationDate).toLocaleDateString()}
-          </p>
-
-          <hr />
+              <hr />
+            </div>
+          ))}
         </div>
-      ))}
-    </div>
-  </div>
-)}
+      </div>
+    )}
     </div>
   );
 }
