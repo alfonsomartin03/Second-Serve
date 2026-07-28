@@ -3,8 +3,9 @@ import "../styles/Dashboard.css";
 import { useNavigate } from "react-router-dom";
 
 export default function Dashboard() {
-  
-  const [accountType, setAccountType] = useState("");
+  const [accountType, setAccountType] = useState(
+    localStorage.getItem("accountType") || "donor"
+  );
   const [listings, setListings] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedListing, setSelectedListing] = useState(null);
@@ -43,11 +44,12 @@ export default function Dashboard() {
       const data = await response.json();
       
       console.log("Dashboard response:", data);
-      
       console.log("Account type:", data.accountType);
+
       if (!response.ok) {
         throw new Error(data.message);
       }
+
       if (data.accountType) setAccountType(data.accountType);
       setListings(data.data);
     } catch (error) {
@@ -78,6 +80,14 @@ export default function Dashboard() {
 
         <div className="header-right">
           <span>{accountType.toUpperCase()}</span>
+          {accountType === "admin" && (
+            <button
+              className="admin-link-btn"
+              onClick={() => navigate("/admin/accounts")}
+            >
+              Accounts
+            </button>
+          )}
           <button
             className="logout-btn"
             onClick={() => {

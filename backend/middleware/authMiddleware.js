@@ -15,6 +15,10 @@ const protect = async (req, res, next) => {
                 return res.status(401).json({ message: "Not authorized, user not found" });
             }
 
+            if (req.user.accountStatus === "suspended") {
+                return res.status(403).json({ message: "Account is suspended" });
+            }
+
             return next();
         } catch (error) {
             console.error("JWT Verification Error:", error.message);
