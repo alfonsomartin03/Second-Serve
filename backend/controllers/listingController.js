@@ -34,7 +34,7 @@ const createListing = async (req, res) => {
 // Retrieve marketplace listings using optional filters
 const getListings = async (req, res) => {
   try {
-    const { status, foodName, city, zipCode } = req.query;
+    const { status, foodName, city, state, zipCode } = req.query;
     const queryObj = {};
 
     // Defaults to available listings
@@ -47,12 +47,19 @@ const getListings = async (req, res) => {
       };
     }
 
-    if (city || zipCode) {
+    if (city || state|| zipCode) {
       const donorFilter = {};
 
       if (city) {
         donorFilter.city = {
           $regex: `^${city}$`,
+          $options: "i",
+        };
+      }
+
+      if (state) {
+        donorFilter.state = {
+          $regex: `^${state}$`,
           $options: "i",
         };
       }
