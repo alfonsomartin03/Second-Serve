@@ -38,7 +38,7 @@ const getListings = async (req, res) => {
     const queryObj = {};
 
     // Defaults to available listings
-    queryObj.status = status || "available";
+    queryObj.status = "available";
 
     if (foodName) {
       queryObj["items.name"] = {
@@ -73,7 +73,7 @@ const getListings = async (req, res) => {
       .populate({
         path: "donor",
         select:
-          "organizationName contactName email phone address city state zipCode",
+          "organizationName city state zipCode",
       })
       .sort({ createdAt: -1 });
 
