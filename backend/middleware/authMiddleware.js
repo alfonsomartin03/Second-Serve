@@ -44,4 +44,14 @@ const donorOnly = (req, res, next) => {
   return res.status(403).json({ message: "Access denied. Donor account required." });
 };
 
-module.exports = { protect, adminOnly, donorOnly };
+const recipientOnly = (req, res, next) => {
+    if (req.user && req.user.accountType === "recipient") {
+        return next();
+    }
+
+    return res.status(403).json({
+        message: "Access denied. Recipient account required."
+    });
+};
+
+module.exports = {protect,adminOnly,donorOnly,recipientOnly};

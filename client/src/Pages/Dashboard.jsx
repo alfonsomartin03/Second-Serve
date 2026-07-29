@@ -8,43 +8,94 @@ export default function Dashboard() {
   const [listings, setListings] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedListing, setSelectedListing] = useState(null);
+  const [pickupDate, setPickupDate] = useState("");
+  const [pickupTime, setPickupTime] = useState("");
+  const [reserving, setReserving] = useState(false);
   const navigate = useNavigate();
 
-  useEffect(() => {
-    const fetchDashboard = async () => {
-      try {
+const fetchDashboard = async () => {
+    try {
         const token = localStorage.getItem("token");
 
         const response = await fetch(
-          "http://localhost:5001/api/listing/dashboard",
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
+            "http://localhost:5001/api/listing/dashboard",
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            }
         );
 
         const data = await response.json();
 
-        console.log("Dashboard response:", data);
-        console.log("Account type:", data.accountType);
-
         if (!response.ok) {
-          throw new Error(data.message);
+            throw new Error(data.message);
         }
 
         setAccountType(data.accountType);
         setListings(data.data);
 
-      } catch (error) {
-        console.error(error);
-      } finally {
+    } catch (err) {
+        console.error(err);
+    } finally {
         setLoading(false);
-      }
-    };
+    }
+};
 
+useEffect(() => {
     fetchDashboard();
-  }, []);
+}, []);
+
+const reserveListing = async () => {
+    console.log("Reserve endpoint hit");
+
+
+    if (!pickupDate || !pickupTime) {
+        alert("Please select a pickup date and time.");
+        return;
+    }
+
+    try {
+        setReserving(true);
+
+        const token = localStorage.getItem("token");
+
+        const pickupDateTime = `${pickupDate}T${pickupTime}`;
+
+        const response = await fetch(
+            `http://localhost:5001/api/listing/${selectedListing._id}/reserve`,
+            {
+                method: "PATCH",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`,
+                },
+                body: JSON.stringify({
+                    pickupDateTime,
+                }),
+            }
+        );
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            throw new Error(data.message);
+        }
+
+        alert("Reservation successful!");
+
+        setSelectedListing(null);
+        setPickupDate("");
+        setPickupTime("");
+
+        fetchDashboard();
+
+    } catch (err) {
+        alert(err.message);
+    } finally {
+        setReserving(false);
+    }
+};
 
   if (loading) {
     return <h2>Loading...</h2>;
@@ -159,8 +210,7 @@ export default function Dashboard() {
 
       <hr />
 
-      <p>
-        <div className="detail-row">
+      <div className="detail-row">
         <strong>Status</strong>
         <span>{selectedListing.status}</span>
       </div>
@@ -176,7 +226,6 @@ export default function Dashboard() {
           {new Date(selectedListing.createdAt).toLocaleDateString()}
         </span>
       </div>
-      </p>
 
       <p>
         <strong>Pickup:</strong>{" "}
@@ -208,6 +257,34 @@ export default function Dashboard() {
           <hr />
         </div>
       ))}
+      {accountType === "recipient" &&
+        selectedListing.status === "available" && (
+          <>
+            <h3>Reserve this Donation</h3>
+
+            <input
+              type="date"
+              value={pickupDate}
+              onChange={(e) => setPickupDate(e.target.value)}
+              className="reservation-input"
+            />
+
+            <input
+              type="time"
+              value={pickupTime}
+              onChange={(e) => setPickupTime(e.target.value)}
+              className="reservation-input"
+            />
+
+            <button
+              className="reserve-btn"
+              onClick={reserveListing}
+              disabled={reserving}
+            >
+              {reserving ? "Reserving..." : "Reserve Listing"}
+            </button>
+          </>
+      )}
     </div>
   </div>
 )}

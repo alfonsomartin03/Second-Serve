@@ -96,8 +96,8 @@ const getListings = async (req, res) => {
 // Retrieve dashboard listings based on the logged-in user's account type
 const getDashboardListings = async (req, res) => {
   try {
-    console.log("Dashboard route reached!");
 
+    // Ensure the user is authenticated
     if (!req.user) {
       return res.status(401).json({
         success: false,
@@ -106,14 +106,25 @@ const getDashboardListings = async (req, res) => {
     }
     let listings;
 
+    // console.log("User account type:", req.user.accountType);
     if (req.user.accountType === "recipient") {
       listings = await Listing.find({
-        status: "available",
-        items: {
-          $elemMatch: {
-            expirationDate: { $gt: new Date() },
-          },
-        },
+          $or: [
+              {
+                  status: "available",
+                  items: {
+                      $elemMatch: {
+                          expirationDate: {
+                              $gt: new Date()
+                          }
+                      }
+                  }
+              },
+              {
+                  status: "reserved",
+                  reservedBy: req.user._id
+              }
+          ]
       })
         .populate({
           path: "donor",
@@ -158,8 +169,83 @@ const getDashboardListings = async (req, res) => {
   }
 };
 
+// Recipient reserves a listing
+const reserveListing = async (req, res) => {
+  //debugging logs
+  console.log("Reserve endpoint hit");
+  console.log("Route ID:", req.params.id);
+  
+  try {
+    const { pickupDateTime } = req.body;
+
+    if (!pickupDateTime) {
+      return res.status(400).json({
+        success: false,
+        message: "Pickup date/time is required.",
+      });
+    }
+
+    const listing = await Listing.findById(req.params.id);
+
+    if (!listing) {
+      return res.status(404).json({
+        success: false,
+        message: "Listing not found.",
+      });
+    }
+
+    // Already reserved?
+    if (listing.status !== "available") {
+      return res.status(400).json({
+        success: false,
+        message: "This listing is no longer available.",
+      });
+    }
+
+    // Find earliest expiration date
+    const earliestExpiration = listing.items.reduce((earliest, item) => {
+      if (!earliest || item.expirationDate < earliest) {
+        return item.expirationDate;
+      }
+      return earliest;
+    }, null);
+
+    const pickup = new Date(pickupDateTime);
+
+    if (pickup >= earliestExpiration) {
+      return res.status(400).json({
+        success: false,
+        message: "Pickup must occur before the food expires.",
+      });
+    }
+
+    listing.status = "reserved";
+    listing.reservedBy = req.user._id;
+    listing.reservedAt = new Date();
+    listing.pickupDateTime = pickup;
+
+    await listing.save();
+
+    res.json({
+      success: true,
+      message: "Listing reserved successfully.",
+      data: listing,
+    });
+
+  } catch (err) {
+    console.error(err);
+
+    res.status(500).json({
+      success: false,
+      message: "Server error.",
+    });
+  }
+};
+
+
 module.exports = {
   createListing,
   getListings,
   getDashboardListings,
+  reserveListing,
 };
