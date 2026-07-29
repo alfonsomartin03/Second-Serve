@@ -227,16 +227,6 @@ const reserveListing = async () => {
         </span>
       </div>
 
-      <p>
-        <strong>Pickup:</strong>{" "}
-        {selectedListing.pickupInstructions}
-      </p>
-
-      <p>
-        <strong>Created:</strong>{" "}
-        {new Date(selectedListing.createdAt).toLocaleDateString()}
-      </p>
-
       <h3>Food Items</h3>
 
       {selectedListing.items.map((item, index) => (
