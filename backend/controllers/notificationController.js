@@ -12,20 +12,6 @@ const getNotifications = async (req, res) => {
     }
 };
 
-const markNotificationsRead = async (req, res) => {
-    try {
-        await Notification.updateMany(
-            { user: req.user._id, read: false },
-            { read: true }
-        );
-
-        res.status(200).json({ message: "Notifications marked read" });
-    } catch (error) {
-        res.status(500).json({ message: "Could not update notifications", error: error.message });
-    }
-};
-
 module.exports = {
-    getNotifications,
-    markNotificationsRead
+    getNotifications
 };

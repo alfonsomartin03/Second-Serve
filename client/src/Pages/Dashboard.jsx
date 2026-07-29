@@ -10,7 +10,6 @@ export default function Dashboard() {
   const [notifications, setNotifications] = useState([]);
   const [notificationError, setNotificationError] = useState("");
   const navigate = useNavigate();
-  const unreadCount = notifications.filter((note) => !note.read).length;
 
   useEffect(() => {
     const loadNotifications = async () => {
@@ -41,38 +40,6 @@ export default function Dashboard() {
 
     loadNotifications();
   }, []);
-
-  const markNotificationsRead = async () => {
-    try {
-      const token = localStorage.getItem("token");
-
-      if (!token) {
-        return;
-      }
-
-      const response = await fetch("http://localhost:5001/api/notifications/read", {
-        method: "PATCH",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.message || "Could not update notifications");
-      }
-
-      setNotifications(
-        notifications.map((note) => ({
-          ...note,
-          read: true,
-        }))
-      );
-    } catch (err) {
-      setNotificationError(err.message);
-    }
-  };
 
   const listings = [
     {
@@ -110,7 +77,7 @@ export default function Dashboard() {
             className="notification-btn"
             onClick={() => setShowNotifications(!showNotifications)}
           >
-            Notifications ({unreadCount})
+            Notifications ({notifications.length})
           </button>
 
           {accountType === "admin" && (
@@ -129,10 +96,6 @@ export default function Dashboard() {
         <section className="notification-panel">
           <div className="notification-header">
             <h2>Notifications</h2>
-
-            <button onClick={markNotificationsRead}>
-              Mark all read
-            </button>
           </div>
 
           {notificationError && (
@@ -146,7 +109,7 @@ export default function Dashboard() {
           {notifications.map((note) => (
             <div
               key={note._id}
-              className={note.read ? "notification-item" : "notification-item unread"}
+              className="notification-item"
             >
               <strong>{note.donationName}</strong>
               <p>{note.message}</p>
