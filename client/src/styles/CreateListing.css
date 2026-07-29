@@ -91,11 +91,17 @@ textarea {
   background: #fafafa;
 }
 
-.item-card input {
+.item-card input,
+.item-card select {
+  width: 100%;
   padding: 0.8rem;
-
   border: 1px solid #ddd;
   border-radius: 8px;
+  background-color: white;
+  font-size: 1rem;
+  color: #333;
+  outline: none;
+  box-sizing: border-box;
 }
 
 .item-header {
