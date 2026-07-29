@@ -35,11 +35,48 @@ const ListingSchema = new mongoose.Schema({
     type: [FoodItemSchema],
     validate: [arrayMinLength, 'A donation must contain at least one food item']
   },
-  status: { 
-    type: String, 
-    enum: ['available', 'claimed', 'completed', 'cancelled'], 
-    default: 'available' 
+  status: {
+    type: String,
+    enum: ['available', 'reserved', 'completed', 'cancelled'],
+    default: 'available'
   },
+  // Recipient who reserved the listing
+  reservedBy: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    default: null
+  },
+
+  // When the reservation was made
+  reservedAt: {
+    type: Date,
+    default: null
+  },
+
+  // Scheduled pickup date and time
+  pickupDateTime: {
+    type: Date,
+    default: null
+  },
+
+  // Donor confirms the donation has been picked up
+  donorConfirmedPickup: {
+    type: Boolean,
+    default: false
+  },
+
+  // Recipient confirms they received the donation
+  recipientConfirmedPickup: {
+    type: Boolean,
+    default: false
+  },
+
+  // When the donation was completed
+  completedAt: {
+    type: Date,
+    default: null
+  },
+
   pickupInstructions: {
     type: String,
     trim: true
