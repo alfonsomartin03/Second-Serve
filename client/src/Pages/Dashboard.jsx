@@ -12,6 +12,7 @@ export default function Dashboard() {
   const [pickupTime, setPickupTime] = useState("");
   const [reserving, setReserving] = useState(false);
   const navigate = useNavigate();
+  const currentUserId = localStorage.getItem("userId");
 
 const fetchDashboard = async () => {
     try {
@@ -100,6 +101,20 @@ const reserveListing = async () => {
   if (loading) {
     return <h2>Loading...</h2>;
   }
+
+  const getUserId = (user) => {
+    if (!user) return null;
+    return typeof user === "string" ? user : user._id;
+  };
+
+  const canConfirmPickup =
+    selectedListing &&
+    selectedListing.status?.toLowerCase() === "reserved" &&
+    (
+      getUserId(selectedListing.donor) === currentUserId ||
+      getUserId(selectedListing.reservedBy) === currentUserId ||
+      getUserId(selectedListing.recipient) === currentUserId
+    );
 
   return (
     <div className="dashboard">
@@ -274,6 +289,17 @@ const reserveListing = async () => {
               {reserving ? "Reserving..." : "Reserve Listing"}
             </button>
           </>
+      )}
+      {canConfirmPickup && (
+        <button
+          type="button"
+          className="confirm-pickup-btn"
+          onClick={() =>
+            alert("Pickup confirmation functionality will be added soon.")
+          }
+        >
+          Confirm Pickup
+        </button>
       )}
     </div>
   </div>

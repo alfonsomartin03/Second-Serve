@@ -104,8 +104,25 @@
   width: 100%;
 }
 
-/* Card */
+@media (max-width: 1200px) {
+  .listings-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
 
+@media (max-width: 900px) {
+  .listings-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 600px) {
+  .listings-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Card */
 .listing-card {
   background: white;
 
@@ -330,4 +347,21 @@
 .reserve-btn:disabled {
   background: #999;
   cursor: not-allowed;
+}
+
+.confirm-pickup-btn {
+  width: 100%;
+  margin-top: 20px;
+  padding: 12px;
+  border: none;
+  border-radius: 8px;
+  background-color: #2e7d32;
+  color: white;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.confirm-pickup-btn:hover {
+  background-color: #256428;
 }
