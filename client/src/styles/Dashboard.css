@@ -38,6 +38,17 @@
   cursor: pointer;
 }
 
+.admin-link-btn {
+  background: #2e7d32;
+  color: white;
+
+  border: none;
+  padding: 0.6rem 1rem;
+  border-radius: 8px;
+
+  cursor: pointer;
+}
+
 /* Welcome */
 
 .welcome-section {
@@ -51,25 +62,46 @@
 /* Search */
 
 .search-container {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  align-items: center;
   margin-bottom: 2rem;
 }
 
 .search-bar {
-  width: 100%;
+  flex: 1;
+  min-width: 140px;
   padding: 1rem;
 
   border: 1px solid #ddd;
   border-radius: 10px;
-
+  
   font-size: 1rem;
 }
 
-/* Grid */
+.search-btn {
+  padding: 1rem 1.5rem;
+  border: none;
+  border-radius: 10px;
+  background-color: #007bff;
+  color: white;
+  font-size: 1rem;
+  cursor: pointer;
+  white-space: nowrap;
+}
 
+.search-btn:hover {
+  background-color: #0056b3;
+}
+
+/* Grid */
 .listings-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-  gap: 1.5rem;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 24px;
+  width: 100%;
 }
 
 /* Card */
