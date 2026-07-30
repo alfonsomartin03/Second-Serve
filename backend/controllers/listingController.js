@@ -171,9 +171,6 @@ const getDashboardListings = async (req, res) => {
 
 // Recipient reserves a listing
 const reserveListing = async (req, res) => {
-  //debugging logs
-  console.log("Reserve endpoint hit");
-  console.log("Route ID:", req.params.id);
   
   try {
     const { pickupDateTime } = req.body;
