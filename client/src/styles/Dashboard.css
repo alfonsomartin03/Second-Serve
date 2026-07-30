@@ -74,6 +74,23 @@
 .notification-item {
   border-top: 1px solid #ddd;
   padding: 0.8rem 0;
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.notification-item.unread {
+  background: #e8f5e9;
+  padding-left: 0.8rem;
+}
+
+.delete-notification-btn {
+  background: #e53935;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 0.4rem 0.7rem;
+  cursor: pointer;
 }
 
 
