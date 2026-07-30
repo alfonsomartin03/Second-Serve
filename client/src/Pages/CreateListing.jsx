@@ -6,6 +6,9 @@ export default function CreateListing() {
   const [pickupInstructions, setPickupInstructions] = useState("");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const [pickupDate, setPickupDate] = useState("");
+  const [pickupTime, setPickupTime] = useState("");
+  const [reserving, setReserving] = useState(false);
 
   const [items, setItems] = useState([
     {
