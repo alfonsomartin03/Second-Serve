@@ -20,6 +20,7 @@ export default function Dashboard() {
   const [zipCode, setZipCode] = useState("");
 
   const navigate = useNavigate();
+  const unreadCount = notifications.filter((note) => !note.read).length;
 
   const loadNotifications = async () => {
     try {
@@ -44,6 +45,79 @@ export default function Dashboard() {
       setNotifications(data);
     } catch (err) {
       setNotificationError(err.message);
+    }
+  };
+
+  const markNotificationsRead = async () => {
+    try {
+      const token = localStorage.getItem("token");
+
+      if (!token) {
+        return;
+      }
+
+      const response = await fetch("http://localhost:5001/api/notifications/read", {
+        method: "PATCH",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || "Could not update notifications");
+      }
+
+      setNotifications(
+        notifications.map((note) => ({
+          ...note,
+          read: true,
+        }))
+      );
+    } catch (err) {
+      setNotificationError(err.message);
+    }
+  };
+
+  const deleteNotification = async (notificationId) => {
+    try {
+      const token = localStorage.getItem("token");
+
+      if (!token) {
+        return;
+      }
+
+      const response = await fetch(
+        `http://localhost:5001/api/notifications/${notificationId}`,
+        {
+          method: "DELETE",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || "Could not delete notification");
+      }
+
+      setNotifications(
+        notifications.filter((note) => note._id !== notificationId)
+      );
+    } catch (err) {
+      setNotificationError(err.message);
+    }
+  };
+
+  const openNotifications = () => {
+    const nextShowNotifications = !showNotifications;
+    setShowNotifications(nextShowNotifications);
+
+    if (nextShowNotifications && unreadCount > 0) {
+      markNotificationsRead();
     }
   };
 
@@ -112,9 +186,9 @@ export default function Dashboard() {
           <span>{accountType.toUpperCase()}</span>
           <button
             className="notification-btn"
-            onClick={() => setShowNotifications(!showNotifications)}
+            onClick={openNotifications}
           >
-            Notifications ({notifications.length})
+            Notifications ({unreadCount})
           </button>
 
           {accountType === "admin" && (
@@ -155,11 +229,20 @@ export default function Dashboard() {
           {notifications.map((note) => (
             <div
               key={note._id}
-              className="notification-item"
+              className={note.read ? "notification-item" : "notification-item unread"}
             >
-              <strong>{note.donationName}</strong>
-              <p>{note.message}</p>
-              <span>{new Date(note.createdAt).toLocaleString()}</span>
+              <div>
+                <strong>{note.donationName}</strong>
+                <p>{note.message}</p>
+                <span>{new Date(note.createdAt).toLocaleString()}</span>
+              </div>
+
+              <button
+                className="delete-notification-btn"
+                onClick={() => deleteNotification(note._id)}
+              >
+                Delete
+              </button>
             </div>
           ))}
         </section>
