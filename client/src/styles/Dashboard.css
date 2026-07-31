@@ -38,7 +38,8 @@
   cursor: pointer;
 }
 
-.admin-link-btn {
+.admin-link-btn,
+.notification-btn {
   background: #2e7d32;
   color: white;
 
@@ -47,6 +48,63 @@
   border-radius: 8px;
 
   cursor: pointer;
+}
+
+/* Notifications */
+
+.notification-panel {
+  background: white;
+  border-radius: 10px;
+  padding: 1rem;
+  margin-bottom: 2rem;
+}
+
+.notification-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.notification-header h2 {
+  margin: 0;
+}
+
+
+.notification-item {
+  border-top: 1px solid #ddd;
+  padding: 0.8rem 0;
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.notification-item.unread {
+  background: #e8f5e9;
+  padding-left: 0.8rem;
+}
+
+.delete-notification-btn {
+  background: #e53935;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 0.4rem 0.7rem;
+  cursor: pointer;
+}
+
+
+.notification-item p {
+  margin: 0.3rem 0;
+}
+
+.notification-item span {
+  color: #555;
+  font-size: 0.9rem;
+}
+
+.notification-error {
+  color: #e53935;
 }
 
 /* Welcome */
