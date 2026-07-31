@@ -1,0 +1,102 @@
+.admin-accounts-page {
+  min-height: 100vh;
+  background: #f5f7fa;
+  padding: 2rem;
+}
+
+.admin-accounts-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #ddd;
+  margin-bottom: 1.5rem;
+}
+
+.admin-accounts-header h1,
+.admin-empty h1 {
+  color: #2e7d32;
+}
+
+.admin-accounts-header p,
+.admin-empty p {
+  color: #555;
+}
+
+.dashboard-link,
+.admin-empty a {
+  background: #2e7d32;
+  color: white;
+  padding: 0.6rem 1rem;
+  border-radius: 8px;
+  text-decoration: none;
+}
+
+.admin-message,
+.admin-error,
+.admin-loading {
+  background: white;
+  padding: 0.8rem;
+  margin-bottom: 1rem;
+  border-radius: 8px;
+}
+
+.admin-message {
+  color: #2e7d32;
+}
+
+.admin-error {
+  color: #c62828;
+}
+
+.accounts-table-wrap {
+  overflow-x: auto;
+  background: white;
+  border-radius: 8px;
+}
+
+.accounts-table {
+  width: 100%;
+  min-width: 760px;
+  border-collapse: collapse;
+}
+
+.accounts-table th,
+.accounts-table td {
+  text-align: left;
+  padding: 1rem;
+  border-bottom: 1px solid #ddd;
+}
+
+.account-status,
+.account-action {
+  border-radius: 8px;
+  padding: 0.45rem 0.7rem;
+  font-weight: bold;
+}
+
+.account-status.active,
+.account-action.reactivate {
+  background: #e8f5e9;
+  color: #2e7d32;
+}
+
+.account-status.suspended,
+.account-action.suspend {
+  background: #ffebee;
+  color: #c62828;
+}
+
+.account-action {
+  border: none;
+  cursor: pointer;
+}
+
+.admin-empty {
+  max-width: 440px;
+  margin: 6rem auto;
+  padding: 2rem;
+  text-align: center;
+  background: white;
+  border-radius: 8px;
+}
+

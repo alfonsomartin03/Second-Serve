@@ -86,6 +86,10 @@ exports.loginUser = async (req, res) => {
             return res.status(400).json({ message: "Invalid email or password" });
         }
 
+        if (user.accountStatus === "suspended") {
+            return res.status(403).json({ message: "Account is suspended" });
+        }
+
         //Confirm successful authentication
         res.status(200).json({
             message: "Logged in successfully!",
