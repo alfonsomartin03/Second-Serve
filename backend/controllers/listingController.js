@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 const User = mongoose.model("User");
 const Listing = require("../models/Listing");
+const Notification = require("../models/Notification");
 
 // Attempt to create a new listing
 const createListing = async (req, res) => {
@@ -11,6 +12,16 @@ const createListing = async (req, res) => {
       donor: req.user.id,
       items,
       pickupInstructions,
+    });
+
+    const firstItem = items && items.length > 0 ? items[0].name : "Donation";
+
+    // Let the donor know the donation update happened right away.
+    await Notification.create({
+      user: req.user.id,
+      listing: newListing._id,
+      donationName: firstItem,
+      message: "Donation listing created.",
     });
 
     res.status(201).json(newListing);
@@ -34,11 +45,11 @@ const createListing = async (req, res) => {
 // Retrieve marketplace listings using optional filters
 const getListings = async (req, res) => {
   try {
-    const { status, foodName, city, zipCode } = req.query;
+    const { status, foodName, city, state, zipCode } = req.query;
     const queryObj = {};
 
     // Defaults to available listings
-    queryObj.status = status || "available";
+    queryObj.status = "available";
 
     if (foodName) {
       queryObj["items.name"] = {
@@ -47,12 +58,19 @@ const getListings = async (req, res) => {
       };
     }
 
-    if (city || zipCode) {
+    if (city || state|| zipCode) {
       const donorFilter = {};
 
       if (city) {
         donorFilter.city = {
           $regex: `^${city}$`,
+          $options: "i",
+        };
+      }
+
+      if (state) {
+        donorFilter.state = {
+          $regex: `^${state}$`,
           $options: "i",
         };
       }
@@ -73,7 +91,7 @@ const getListings = async (req, res) => {
       .populate({
         path: "donor",
         select:
-          "organizationName contactName email phone address city state zipCode",
+          "organizationName city state zipCode",
       })
       .sort({ createdAt: -1 });
 
