@@ -9,6 +9,9 @@ export default function Dashboard() {
   const [listings, setListings] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedListing, setSelectedListing] = useState(null);
+  const [showNotifications, setShowNotifications] = useState(false);
+  const [notifications, setNotifications] = useState([]);
+  const [notificationError, setNotificationError] = useState("");
 
   //Search filter states
   const [foodName, setFoodName] = useState("");
@@ -17,6 +20,106 @@ export default function Dashboard() {
   const [zipCode, setZipCode] = useState("");
 
   const navigate = useNavigate();
+  const unreadCount = notifications.filter((note) => !note.read).length;
+
+  const loadNotifications = async () => {
+    try {
+      const token = localStorage.getItem("token");
+
+      if (!token) {
+        return;
+      }
+
+      const response = await fetch("http://localhost:5001/api/notifications", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || "Could not load notifications");
+      }
+
+      setNotifications(data);
+    } catch (err) {
+      setNotificationError(err.message);
+    }
+  };
+
+  const markNotificationsRead = async () => {
+    try {
+      const token = localStorage.getItem("token");
+
+      if (!token) {
+        return;
+      }
+
+      const response = await fetch("http://localhost:5001/api/notifications/read", {
+        method: "PATCH",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || "Could not update notifications");
+      }
+
+      setNotifications(
+        notifications.map((note) => ({
+          ...note,
+          read: true,
+        }))
+      );
+    } catch (err) {
+      setNotificationError(err.message);
+    }
+  };
+
+  const deleteNotification = async (notificationId) => {
+    try {
+      const token = localStorage.getItem("token");
+
+      if (!token) {
+        return;
+      }
+
+      const response = await fetch(
+        `http://localhost:5001/api/notifications/${notificationId}`,
+        {
+          method: "DELETE",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || "Could not delete notification");
+      }
+
+      setNotifications(
+        notifications.filter((note) => note._id !== notificationId)
+      );
+    } catch (err) {
+      setNotificationError(err.message);
+    }
+  };
+
+  const openNotifications = () => {
+    const nextShowNotifications = !showNotifications;
+    setShowNotifications(nextShowNotifications);
+
+    if (nextShowNotifications && unreadCount > 0) {
+      markNotificationsRead();
+    }
+  };
 
   const fetchDashboard = async () => {
     try {
@@ -61,6 +164,7 @@ export default function Dashboard() {
 
   useEffect(() => {
     fetchDashboard();
+    loadNotifications();
   }, []);
 
   const handleSearchSubmit = (e) => {
@@ -80,6 +184,13 @@ export default function Dashboard() {
 
         <div className="header-right">
           <span>{accountType.toUpperCase()}</span>
+          <button
+            className="notification-btn"
+            onClick={openNotifications}
+          >
+            Notifications ({unreadCount})
+          </button>
+
           {accountType === "admin" && (
             <button
               className="admin-link-btn"
@@ -100,6 +211,42 @@ export default function Dashboard() {
           </button>
         </div>
       </header>
+
+      {showNotifications && (
+        <section className="notification-panel">
+          <div className="notification-header">
+            <h2>Notifications</h2>
+          </div>
+
+          {notificationError && (
+            <p className="notification-error">{notificationError}</p>
+          )}
+
+          {notifications.length === 0 && !notificationError && (
+            <p>No notifications yet.</p>
+          )}
+
+          {notifications.map((note) => (
+            <div
+              key={note._id}
+              className={note.read ? "notification-item" : "notification-item unread"}
+            >
+              <div>
+                <strong>{note.donationName}</strong>
+                <p>{note.message}</p>
+                <span>{new Date(note.createdAt).toLocaleString()}</span>
+              </div>
+
+              <button
+                className="delete-notification-btn"
+                onClick={() => deleteNotification(note._id)}
+              >
+                Delete
+              </button>
+            </div>
+          ))}
+        </section>
+      )}
 
       {/* Welcome */}
       <section className="welcome-section">
