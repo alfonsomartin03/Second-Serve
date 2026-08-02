@@ -9,6 +9,7 @@ const notificationRoute = require('./routes/notificationRoute');
 const cors = require("cors");
 
 const app = express();
+app.disable('x-powered-by');
 
 app.use(express.json());
 app.use(cookieParser());
