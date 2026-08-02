@@ -3,47 +3,38 @@ import "../styles/Dashboard.css";
 import { useNavigate } from "react-router-dom";
 
 export default function Dashboard() {
+  // General dashboard state
   const [accountType, setAccountType] = useState(
     localStorage.getItem("accountType") || "donor"
   );
   const [listings, setListings] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedListing, setSelectedListing] = useState(null);
+
+  // Reservation state
   const [pickupDate, setPickupDate] = useState("");
   const [pickupTime, setPickupTime] = useState("");
   const [reserving, setReserving] = useState(false);
-  const navigate = useNavigate();
-  const currentUserId = localStorage.getItem("userId");
 
-const fetchDashboard = async () => {
-    try {
-        const token = localStorage.getItem("token");
-
-        const response = await fetch(
-            "http://localhost:5001/api/listing/dashboard",
-            {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
-            }
-        );
-
-        const data = await response.json();
-
-        if (!response.ok) {
-            throw new Error(data.message);
+  // Notification state
   const [showNotifications, setShowNotifications] = useState(false);
   const [notifications, setNotifications] = useState([]);
   const [notificationError, setNotificationError] = useState("");
 
-  //Search filter states
+  // Search filter state
   const [foodName, setFoodName] = useState("");
   const [city, setCity] = useState("");
   const [state, setState] = useState("");
   const [zipCode, setZipCode] = useState("");
 
   const navigate = useNavigate();
+  const currentUserId = localStorage.getItem("userId");
+
   const unreadCount = notifications.filter((note) => !note.read).length;
+
+  // =========================================================
+  // NOTIFICATIONS
+  // =========================================================
 
   const loadNotifications = async () => {
     try {
@@ -53,11 +44,14 @@ const fetchDashboard = async () => {
         return;
       }
 
-      const response = await fetch("http://localhost:5001/api/notifications", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const response = await fetch(
+        "http://localhost:5001/api/notifications",
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
 
       const data = await response.json();
 
@@ -79,17 +73,22 @@ const fetchDashboard = async () => {
         return;
       }
 
-      const response = await fetch("http://localhost:5001/api/notifications/read", {
-        method: "PATCH",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const response = await fetch(
+        "http://localhost:5001/api/notifications/read",
+        {
+          method: "PATCH",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
 
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.message || "Could not update notifications");
+        throw new Error(
+          data.message || "Could not update notifications"
+        );
       }
 
       setNotifications(
@@ -124,70 +123,11 @@ const fetchDashboard = async () => {
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.message || "Could not delete notification");
+        throw new Error(
+          data.message || "Could not delete notification"
+        );
       }
 
-    } catch (err) {
-        console.error(err);
-    } finally {
-        setLoading(false);
-    }
-};
-
-useEffect(() => {
-    fetchDashboard();
-}, []);
-
-const reserveListing = async () => {
-    console.log("Reserve endpoint hit");
-
-
-    if (!pickupDate || !pickupTime) {
-        alert("Please select a pickup date and time.");
-        return;
-    }
-
-    try {
-        setReserving(true);
-
-        const token = localStorage.getItem("token");
-
-        const pickupDateTime = `${pickupDate}T${pickupTime}`;
-
-        const response = await fetch(
-            `http://localhost:5001/api/listing/${selectedListing._id}/reserve`,
-            {
-                method: "PATCH",
-                headers: {
-                    "Content-Type": "application/json",
-                    Authorization: `Bearer ${token}`,
-                },
-                body: JSON.stringify({
-                    pickupDateTime,
-                }),
-            }
-        );
-
-        const data = await response.json();
-
-        if (!response.ok) {
-            throw new Error(data.message);
-        }
-
-        alert("Reservation successful!");
-
-        setSelectedListing(null);
-        setPickupDate("");
-        setPickupTime("");
-
-        fetchDashboard();
-
-    } catch (err) {
-        alert(err.message);
-    } finally {
-        setReserving(false);
-    }
-};
       setNotifications(
         notifications.filter((note) => note._id !== notificationId)
       );
@@ -198,6 +138,7 @@ const reserveListing = async () => {
 
   const openNotifications = () => {
     const nextShowNotifications = !showNotifications;
+
     setShowNotifications(nextShowNotifications);
 
     if (nextShowNotifications && unreadCount > 0) {
@@ -205,31 +146,38 @@ const reserveListing = async () => {
     }
   };
 
+  // =========================================================
+  // DASHBOARD / SEARCH
+  // =========================================================
+
   const fetchDashboard = async () => {
     try {
       setLoading(true);
+
       const token = localStorage.getItem("token");
 
-      //Build query string dynamically based on non-empty values
+      // Build query string dynamically from search fields
       const queryParams = new URLSearchParams();
+
       if (foodName) queryParams.append("foodName", foodName);
       if (city) queryParams.append("city", city);
       if (state) queryParams.append("state", state);
       if (zipCode) queryParams.append("zipCode", zipCode);
 
-      //Fetch from public/search route when searching, or dashboard route on load
+      // Use search route when filters exist,
+      // otherwise load the normal dashboard
       const url = queryParams.toString()
-      ? `http://localhost:5001/api/listing?${queryParams.toString()}`
-      : "http://localhost:5001/api/listing/dashboard";
-      
+        ? `http://localhost:5001/api/listing?${queryParams.toString()}`
+        : "http://localhost:5001/api/listing/dashboard";
+
       const response = await fetch(url, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
-      
+
       const data = await response.json();
-      
+
       console.log("Dashboard response:", data);
       console.log("Account type:", data.accountType);
 
@@ -237,7 +185,10 @@ const reserveListing = async () => {
         throw new Error(data.message);
       }
 
-      if (data.accountType) setAccountType(data.accountType);
+      if (data.accountType) {
+        setAccountType(data.accountType);
+      }
+
       setListings(data.data);
     } catch (error) {
       console.error(error);
@@ -246,33 +197,97 @@ const reserveListing = async () => {
     }
   };
 
+  const handleSearchSubmit = (e) => {
+    e.preventDefault();
+    fetchDashboard();
+  };
+
+  // =========================================================
+  // RESERVATION
+  // =========================================================
+
+  const reserveListing = async () => {
+    console.log("Reserve endpoint hit");
+
+    if (!pickupDate || !pickupTime) {
+      alert("Please select a pickup date and time.");
+      return;
+    }
+
+    try {
+      setReserving(true);
+
+      const token = localStorage.getItem("token");
+
+      const pickupDateTime = `${pickupDate}T${pickupTime}`;
+
+      const response = await fetch(
+        `http://localhost:5001/api/listing/${selectedListing._id}/reserve`,
+        {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            pickupDateTime,
+          }),
+        }
+      );
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message);
+      }
+
+      alert("Reservation successful!");
+
+      setSelectedListing(null);
+      setPickupDate("");
+      setPickupTime("");
+
+      fetchDashboard();
+    } catch (err) {
+      alert(err.message);
+    } finally {
+      setReserving(false);
+    }
+  };
+
+  // =========================================================
+  // INITIAL LOAD
+  // =========================================================
+
   useEffect(() => {
     fetchDashboard();
     loadNotifications();
   }, []);
 
-  const handleSearchSubmit = (e) => {
-    e.preventDefault(); // Prevents page reload
-    fetchDashboard();
-  };
-
-  if (loading) {
-    return <h2>Loading...</h2>;
-  }
+  // =========================================================
+  // PICKUP HELPERS
+  // =========================================================
 
   const getUserId = (user) => {
     if (!user) return null;
+
     return typeof user === "string" ? user : user._id;
   };
 
   const canConfirmPickup =
     selectedListing &&
     selectedListing.status?.toLowerCase() === "reserved" &&
-    (
-      getUserId(selectedListing.donor) === currentUserId ||
+    (getUserId(selectedListing.donor) === currentUserId ||
       getUserId(selectedListing.reservedBy) === currentUserId ||
-      getUserId(selectedListing.recipient) === currentUserId
-    );
+      getUserId(selectedListing.recipient) === currentUserId);
+
+  if (loading) {
+    return <h2>Loading...</h2>;
+  }
+
+  // =========================================================
+  // PAGE
+  // =========================================================
 
   return (
     <div className="dashboard">
@@ -282,6 +297,7 @@ const reserveListing = async () => {
 
         <div className="header-right">
           <span>{accountType.toUpperCase()}</span>
+
           <button
             className="notification-btn"
             onClick={openNotifications}
@@ -297,6 +313,7 @@ const reserveListing = async () => {
               Accounts
             </button>
           )}
+
           <button
             className="logout-btn"
             onClick={() => {
@@ -310,6 +327,7 @@ const reserveListing = async () => {
         </div>
       </header>
 
+      {/* Notifications */}
       {showNotifications && (
         <section className="notification-panel">
           <div className="notification-header">
@@ -317,7 +335,9 @@ const reserveListing = async () => {
           </div>
 
           {notificationError && (
-            <p className="notification-error">{notificationError}</p>
+            <p className="notification-error">
+              {notificationError}
+            </p>
           )}
 
           {notifications.length === 0 && !notificationError && (
@@ -327,12 +347,18 @@ const reserveListing = async () => {
           {notifications.map((note) => (
             <div
               key={note._id}
-              className={note.read ? "notification-item" : "notification-item unread"}
+              className={
+                note.read
+                  ? "notification-item"
+                  : "notification-item unread"
+              }
             >
               <div>
                 <strong>{note.donationName}</strong>
                 <p>{note.message}</p>
-                <span>{new Date(note.createdAt).toLocaleString()}</span>
+                <span>
+                  {new Date(note.createdAt).toLocaleString()}
+                </span>
               </div>
 
               <button
@@ -361,8 +387,11 @@ const reserveListing = async () => {
         </p>
       </section>
 
-      {/* Multi-field Search Form */}
-      <form className="search-container" onSubmit={handleSearchSubmit}>
+      {/* Search */}
+      <form
+        className="search-container"
+        onSubmit={handleSearchSubmit}
+      >
         <input
           type="text"
           placeholder="Food item (e.g. Bread)"
@@ -370,6 +399,7 @@ const reserveListing = async () => {
           onChange={(e) => setFoodName(e.target.value)}
           className="search-bar"
         />
+
         <input
           type="text"
           placeholder="City"
@@ -377,6 +407,7 @@ const reserveListing = async () => {
           onChange={(e) => setCity(e.target.value)}
           className="search-bar"
         />
+
         <input
           type="text"
           placeholder="State"
@@ -384,6 +415,7 @@ const reserveListing = async () => {
           onChange={(e) => setState(e.target.value)}
           className="search-bar"
         />
+
         <input
           type="text"
           placeholder="Zip Code"
@@ -391,6 +423,7 @@ const reserveListing = async () => {
           onChange={(e) => setZipCode(e.target.value)}
           className="search-bar"
         />
+
         <button type="submit" className="search-btn">
           Search
         </button>
@@ -399,11 +432,16 @@ const reserveListing = async () => {
       {/* Listings */}
       <div className="listings-grid">
         {listings.map((listing) => (
-          <div key={listing._id || listing.id} className="listing-card">
+          <div
+            key={listing._id || listing.id}
+            className="listing-card"
+          >
             <div className="listing-header">
               <h3>{listing.donor.organizationName}</h3>
 
-              <span className={`status ${listing.status.toLowerCase()}`}>
+              <span
+                className={`status ${listing.status.toLowerCase()}`}
+              >
                 {listing.status}
               </span>
             </div>
@@ -413,12 +451,15 @@ const reserveListing = async () => {
             </p>
 
             <p>
-              <strong>Pickup:</strong> {listing.pickupInstructions}
+              <strong>Pickup:</strong>{" "}
+              {listing.pickupInstructions}
             </p>
-            
+
             <p>
               <strong>Created:</strong>{" "}
-              {new Date(listing.createdAt).toLocaleDateString()}
+              {new Date(
+                listing.createdAt
+              ).toLocaleDateString()}
             </p>
 
             <button
@@ -431,15 +472,17 @@ const reserveListing = async () => {
         ))}
       </div>
 
-      {/* Donor Floating Button */}
+      {/* Donor create listing button */}
       {accountType === "donor" && (
         <button
           className="floating-btn"
           onClick={() => navigate("/create-listing")}
-          >+
-          </button>
+        >
+          +
+        </button>
       )}
 
+      {/* Listing Modal */}
       {selectedListing && (
         <div
           className="modal-overlay"
@@ -456,7 +499,9 @@ const reserveListing = async () => {
               ✕
             </button>
 
-            <h2>{selectedListing.donor.organizationName}</h2>
+            <h2>
+              {selectedListing.donor.organizationName}
+            </h2>
 
             <hr />
 
@@ -467,13 +512,17 @@ const reserveListing = async () => {
 
             <div className="detail-row">
               <strong>Pickup</strong>
-              <span>{selectedListing.pickupInstructions}</span>
+              <span>
+                {selectedListing.pickupInstructions}
+              </span>
             </div>
 
             <div className="detail-row">
               <strong>Created</strong>
               <span>
-                {new Date(selectedListing.createdAt).toLocaleDateString()}
+                {new Date(
+                  selectedListing.createdAt
+                ).toLocaleDateString()}
               </span>
             </div>
 
@@ -491,56 +540,69 @@ const reserveListing = async () => {
 
                 <p>
                   Expires:{" "}
-                  {new Date(item.expirationDate).toLocaleDateString()}
+                  {new Date(
+                    item.expirationDate
+                  ).toLocaleDateString()}
                 </p>
 
-              <hr />
-            </div>
-          ))}
+                <hr />
+              </div>
+            ))}
+
+            {/* Reservation controls */}
+            {accountType === "recipient" &&
+              selectedListing.status?.toLowerCase() ===
+                "available" && (
+                <>
+                  <h3>Reserve this Donation</h3>
+
+                  <input
+                    type="date"
+                    value={pickupDate}
+                    onChange={(e) =>
+                      setPickupDate(e.target.value)
+                    }
+                    className="reservation-input"
+                  />
+
+                  <input
+                    type="time"
+                    value={pickupTime}
+                    onChange={(e) =>
+                      setPickupTime(e.target.value)
+                    }
+                    className="reservation-input"
+                  />
+
+                  <button
+                    className="reserve-btn"
+                    onClick={reserveListing}
+                    disabled={reserving}
+                  >
+                    {reserving
+                      ? "Reserving..."
+                      : "Reserve Listing"}
+                  </button>
+                </>
+              )}
+
+            {/* Confirm pickup */}
+            {canConfirmPickup && (
+              <button
+                type="button"
+                className="confirm-pickup-btn"
+                onClick={() =>
+                  alert(
+                    "Pickup confirmation functionality will be added soon."
+                  )
+                }
+              >
+                Confirm Pickup
+              </button>
+            )}
+          </div>
         </div>
-      ))}
-      {accountType === "recipient" &&
-        selectedListing.status === "available" && (
-          <>
-            <h3>Reserve this Donation</h3>
-
-            <input
-              type="date"
-              value={pickupDate}
-              onChange={(e) => setPickupDate(e.target.value)}
-              className="reservation-input"
-            />
-
-            <input
-              type="time"
-              value={pickupTime}
-              onChange={(e) => setPickupTime(e.target.value)}
-              className="reservation-input"
-            />
-
-            <button
-              className="reserve-btn"
-              onClick={reserveListing}
-              disabled={reserving}
-            >
-              {reserving ? "Reserving..." : "Reserve Listing"}
-            </button>
-          </>
       )}
-      {canConfirmPickup && (
-        <button
-          type="button"
-          className="confirm-pickup-btn"
-          onClick={() =>
-            alert("Pickup confirmation functionality will be added soon.")
-          }
-        >
-          Confirm Pickup
-        </button>
-      )}
-    </div>
-  </div>
-)}
     </div>
   );
 }
