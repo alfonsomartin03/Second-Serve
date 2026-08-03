@@ -37,17 +37,17 @@ export default function Login() {
       }
 
       // Store login information
-      localStorage.setItem("token", data.token);
-      localStorage.setItem("userId", data.userId);
+      localStorage.setItem("token", String(data.token));
+      localStorage.setItem("userId", String(data.userId));
 
       if (data.accountType) {
-        localStorage.setItem("accountType", data.accountType);
+        localStorage.setItem("accountType", String(data.accountType));
       }
 
       if (data.organizationName) {
         localStorage.setItem(
           "organizationName",
-          data.organizationName
+          String(data.organizationName)
         );
       }
 

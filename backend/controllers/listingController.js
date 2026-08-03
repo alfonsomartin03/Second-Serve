@@ -51,33 +51,20 @@ const getListings = async (req, res) => {
     // Defaults to available listings
     queryObj.status = "available";
 
-    if (foodName) {
-      queryObj["items.name"] = {
-        $regex: foodName,
-        $options: "i",
-      };
+    if (typeof foodName === "string") {
+      queryObj["items.name"] = foodName;
     }
 
-    if (city || state|| zipCode) {
+    if (
+      typeof city === "string" ||
+      typeof state === "string" ||
+      typeof zipCode === "string"
+    ) {
       const donorFilter = {};
 
-      if (city) {
-        donorFilter.city = {
-          $regex: `^${city}$`,
-          $options: "i",
-        };
-      }
-
-      if (state) {
-        donorFilter.state = {
-          $regex: `^${state}$`,
-          $options: "i",
-        };
-      }
-
-      if (zipCode) {
-        donorFilter.zipCode = zipCode;
-      }
+      if (typeof city === "string") donorFilter.city = city;
+      if (typeof state === "string") donorFilter.state = state;
+      if (typeof zipCode === "string") donorFilter.zipCode = zipCode;
 
       const matchingDonors = await User.find(donorFilter).select("_id");
       const donorIds = matchingDonors.map((donor) => donor._id);
