@@ -31,7 +31,7 @@ exports.registerUser = async (req, res) => {
         if (typeof email !== 'string') {
             return res.status(400).json({ message: "Invalid email format" });
 }
-        const userExists = await User.findOne({ email });
+        const userExists = await User.findOne({ email: String(email) });
         if (userExists) {
             return res.status(400).json({ message: "User already exists with this email" });
         }
@@ -82,7 +82,7 @@ exports.loginUser = async (req, res) => {
             return res.status(400).json({ message: "Invalid email format" });
         }
         
-        const user = await User.findOne({ email });
+        const user = await User.findOne({ email: String(email) });
         if (!user) {
             return res.status(400).json({ message: "Invalid email or password" });
         }
