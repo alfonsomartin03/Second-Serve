@@ -52,7 +52,7 @@ const getListings = async (req, res) => {
     queryObj.status = "available";
 
     if (typeof foodName === "string") {
-      queryObj["items.name"] = foodName;
+      queryObj["items.name"] = String(foodName);
     }
 
     if (
@@ -62,9 +62,9 @@ const getListings = async (req, res) => {
     ) {
       const donorFilter = {};
 
-      if (typeof city === "string") donorFilter.city = city;
-      if (typeof state === "string") donorFilter.state = state;
-      if (typeof zipCode === "string") donorFilter.zipCode = zipCode;
+      if (typeof city === "string") donorFilter.city = String(city);
+      if (typeof state === "string") donorFilter.state = String(state);
+      if (typeof zipCode === "string") donorFilter.zipCode = String(zipCode);
 
       const matchingDonors = await User.find(donorFilter).select("_id");
       const donorIds = matchingDonors.map((donor) => donor._id);
@@ -74,7 +74,7 @@ const getListings = async (req, res) => {
       };
     }
 
-    const listings = await Listing.find(queryObj)
+    const listings = await Listing.find({ ...queryObj })
       .populate({
         path: "donor",
         select:
