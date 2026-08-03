@@ -36,22 +36,23 @@ export default function Login() {
         throw new Error(data.message || "Login failed");
       }
 
-      // Store login information
-      if (typeof data.token === "string" && data.token) {
-        localStorage.setItem("token", data.token);
-      }
+      //Quick sanitizer helper: keeps only safe characters (alphanumeric, hyphens, underscores, dots, @)
+      const clean = (val) => (typeof val === "string" ? val.replace(/[^a-zA-Z0-9_\-@.]/g, "") : "");
 
-      if (typeof data.userId === "string" && data.userId) {
-        localStorage.setItem("userId", data.userId);
-      }
-      
-      if (typeof data.accountType === "string" && data.accountType) {
-        localStorage.setItem("accountType", data.accountType);
-      }
-      
-      if (typeof data.organizationName === "string" && data.organizationName) {
-        localStorage.setItem("organizationName", data.organizationName);
-      }
+      //Sanitize string fields before saving
+      const safeToken = typeof data.token === "string" && data.token ? data.token : "";
+      const safeUserId = clean(data.userId);
+      const safeOrgName = clean(data.organizationName);
+
+      //Validate against an explicit list for known enums
+      const ALLOWED_ACCOUNT_TYPES = ["donor", "recipient", "admin"];
+      const safeAccountType = ALLOWED_ACCOUNT_TYPES.includes(data.accountType) ? data.accountType : "";
+
+      // Store validated values
+      if (safeToken) localStorage.setItem("token", safeToken);
+      if (safeUserId) localStorage.setItem("userId", safeUserId);
+      if (safeAccountType) localStorage.setItem("accountType", safeAccountType);
+      if (safeOrgName) localStorage.setItem("organizationName", safeOrgName);
 
       // Redirect to dashboard
       navigate("/dashboard");
