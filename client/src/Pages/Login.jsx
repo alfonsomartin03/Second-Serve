@@ -36,23 +36,20 @@ export default function Login() {
         throw new Error(data.message || "Login failed");
       }
 
-      //Quick sanitizer helper: keeps only safe characters (alphanumeric, hyphens, underscores, dots, @)
-      const clean = (val) => (typeof val === "string" ? val.replace(/[^a-zA-Z0-9_\-@.]/g, "") : "");
+      // Store login information
+      localStorage.setItem("token", String(data.token));
+      localStorage.setItem("userId", String(data.userId));
 
-      //Sanitize string fields before saving
-      const safeToken = typeof data.token === "string" && data.token ? data.token : "";
-      const safeUserId = clean(data.userId);
-      const safeOrgName = clean(data.organizationName);
+      if (data.accountType) {
+        localStorage.setItem("accountType", String(data.accountType));
+      }
 
-      //Validate against an explicit list for known enums
-      const ALLOWED_ACCOUNT_TYPES = ["donor", "recipient", "admin"];
-      const safeAccountType = ALLOWED_ACCOUNT_TYPES.includes(data.accountType) ? data.accountType : "";
-
-      // Store validated values
-      if (safeToken) localStorage.setItem("token", safeToken);
-      if (safeUserId) localStorage.setItem("userId", safeUserId);
-      if (safeAccountType) localStorage.setItem("accountType", safeAccountType);
-      if (safeOrgName) localStorage.setItem("organizationName", safeOrgName);
+      if (data.organizationName) {
+        localStorage.setItem(
+          "organizationName",
+          String(data.organizationName)
+        );
+      }
 
       // Redirect to dashboard
       navigate("/dashboard");
