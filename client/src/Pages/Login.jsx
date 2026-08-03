@@ -37,18 +37,20 @@ export default function Login() {
       }
 
       // Store login information
-      localStorage.setItem("token", String(data.token));
-      localStorage.setItem("userId", String(data.userId));
-
-      if (data.accountType) {
-        localStorage.setItem("accountType", String(data.accountType));
+      if (typeof data.token === "string" && data.token) {
+        localStorage.setItem("token", data.token);
       }
 
-      if (data.organizationName) {
-        localStorage.setItem(
-          "organizationName",
-          String(data.organizationName)
-        );
+      if (typeof data.userId === "string" && data.userId) {
+        localStorage.setItem("userId", data.userId);
+      }
+      
+      if (typeof data.accountType === "string" && data.accountType) {
+        localStorage.setItem("accountType", data.accountType);
+      }
+      
+      if (typeof data.organizationName === "string" && data.organizationName) {
+        localStorage.setItem("organizationName", data.organizationName);
       }
 
       // Redirect to dashboard
